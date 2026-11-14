@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#f3d9ff">
+<title>BALL RUSH</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Bungee&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=3">
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<!-- 인게임 버튼 -->
+<div id="hud" class="hidden">
+  <button id="pauseBtn" class="hud-btn" aria-label="일시정지">II</button>
+  <button id="skillBtn" aria-label="스킬">
+    <span class="skill-icon" id="skillIcon">🚀</span>
+    <span class="skill-key">E</span>
+    <span class="skill-cd" id="skillCd"></span>
+  </button>
+</div>
+
+<!-- 메인 메뉴 -->
+<div id="menu" class="screen">
+  <div class="panel menu-panel">
+    <h1 class="logo"><span>BALL</span><span>RUSH</span></h1>
+    <div class="tagline">볼 러시 · 꾹 누르고 날아올라라</div>
+    <div class="menu-stats">
+      <div><small>BEST</small><b id="menuBest">0</b></div>
+      <div><small>COIN</small><b class="coin-text">🪙 <span id="menuCoins">0</span></b></div>
+    </div>
+    <button id="btnPlay" class="btn btn-play">PLAY</button>
+    <button id="btnSkills" class="btn btn-skill">
+      <small>장착 스킬 [E]</small>
+      <span id="menuSkill">🚀 NITRO BURST</span>
+    </button>
+    <button id="btnCustom" class="btn btn-custom">🎨 꾸미기</button>
+    <div class="howto">
+      <div><b>꾹 누르기</b> 앞으로 가속</div>
+      <div><b>공중에서 꾹 → 착지 직전에 떼기</b> PERFECT! 속도 & 점수 폭발</div>
+      <div><b>E / 스킬 버튼</b> 장착한 스킬 발동</div>
+      <div><b class="red">▲ 빨간 적</b> 속도 기준 이상이면 박살, 미만이면 게임오버</div>
+    </div>
+    <button id="btnMute" class="btn-mini">🔊 소리 켜짐</button>
+  </div>
+</div>
+
+<!-- 스킬 상점 / 로드아웃 -->
+<div id="shop" class="screen hidden">
+  <div class="panel shop-panel">
+    <div class="shop-head">
+      <h2>SKILL SHOP</h2>
+      <div class="coin-pill">🪙 <span id="shopCoins">0</span></div>
+    </div>
+    <div class="shop-sub">플레이 전에 E 키에 장착할 스킬을 고르고 강화하세요</div>
+    <div id="shopList" class="shop-list"></div>
+    <button id="btnShopBack" class="btn btn-play small">돌아가기</button>
+  </div>
+</div>
+
+<!-- 꾸미기: 구체 색 / 배경 핵심 색 -->
+<div id="custom" class="screen hidden">
+  <div class="panel custom-panel">
+    <h2 class="custom-title">CUSTOMIZE</h2>
+    <div id="customPreview" class="custom-preview"><div class="pv-sun"></div><div class="pv-ground"></div><div id="pvBall" class="pv-ball"></div></div>
+    <div class="custom-row">
+      <div class="custom-label">구체 색</div>
+      <div id="ballSwatches" class="swatches"></div>
+      <input id="ballHue" class="hue-slider" type="range" min="0" max="359" step="1" aria-label="구체 색">
+    </div>
+    <div class="custom-row">
+      <div class="custom-label">배경 색</div>
+      <div id="skySwatches" class="swatches"></div>
+      <input id="skyHue" class="hue-slider" type="range" min="0" max="359" step="1" aria-label="배경 색">
+    </div>
+    <button id="btnCustomReset" class="btn-mini">↺ 기본값</button>
+    <button id="btnCustomBack" class="btn btn-play small">돌아가기</button>
+  </div>
+</div>
+
+<!-- 일시정지 -->
+<div id="pause" class="screen hidden">
+  <div class="panel">
+    <h2 class="big">PAUSE</h2>
+    <button id="btnResume" class="btn btn-play">계속하기</button>
+    <button id="btnQuit" class="btn btn-skill">메뉴로</button>
+  </div>
+</div>
+
+<!-- 게임오버 -->
+<div id="gameover" class="screen hidden">
+  <div class="panel over-panel">
+    <h2 class="crash">CRASH!</h2>
+    <div id="newBest" class="new-best hidden">★ NEW BEST ★</div>
+    <div class="over-score" id="overScore">0</div>
+    <div class="over-kr" id="overKr"></div>
+    <div class="over-grid">
+      <div><small>거리</small><b id="overDist">0m</b></div>
+      <div><small>최고 속도</small><b id="overSpeed">0</b></div>
+      <div><small>PERFECT</small><b id="overPerfect">0</b></div>
+      <div><small>격파</small><b id="overKills">0</b></div>
+      <div><small>최대 배율</small><b id="overMult">x1</b></div>
+      <div><small>획득 코인</small><b id="overCoins" class="coin-text">0</b></div>
+    </div>
+    <div class="over-best">BEST <span id="overBest">0</span></div>
+    <button id="btnRetry" class="btn btn-play">RETRY</button>
+    <button id="btnMenu" class="btn btn-skill">메뉴 / 스킬 상점으로</button>
+  </div>
+</div>
+
+<!-- ?v= 는 캐시 무효화용. JS/CSS 를 바꾸면 숫자를 올려야 이전 파일과 섞이지 않는다 -->
+<script src="js/save.js?v=3"></script>
+<script src="js/audio.js?v=3"></script>
+<script src="js/skills.js?v=3"></script>
+<script src="js/game.js?v=3"></script>
+</body>
+</html>
